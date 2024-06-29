@@ -24,7 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -65,4 +64,54 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.primary-nav {
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.nav-link {
+  margin-left: 20px;
+}
+
+.title {
+  background: linear-gradient(90deg, #4954E0 0%, #4A95E7 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-button {
+  width: 120px;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+
+.button-login {
+  border: 3px solid var(--DarkBlue, #4956E0);
+  background: #FFF;
+}
+
+.primary-header {
+  font-family: "Plus Jakarta Sans";
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.search-header {
+  width: 120vh;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  border: 1px solid #000;
+  background: #FFF;
+  color: black;
+  padding-left: 20px;
 }
