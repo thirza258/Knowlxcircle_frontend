@@ -7,9 +7,9 @@ const Header = () => {
             <div className="container">
                 <div className="row">
                     <div className="col-lg-8 mx-auto text-center">
-                        <h1 className="primary-header">Search Knowledge</h1>
-                        <input type="text" className="search-header" placeholder="Search... Boosted with Gemini" />
-                        <p className="primary-nav">A free, responsive, one page Bootstrap theme.<br />Created with love.</p>
+                        <h1 className="primary-header title">Search Knowledge</h1>
+                        <input type="text" className="search-header mt-5 text-black" placeholder="Search... Boosted with Gemini" /><i className="fa fa-search"></i>
+                        <p className="primary-nav mt-10 text-[#4A95E7]">A free, responsive, one page Bootstrap theme.<br />Created with love.</p>
                     </div>
                 </div>
             </div>
