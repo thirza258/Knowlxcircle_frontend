@@ -6,6 +6,8 @@ import HomeBody from './components/HomeBody'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login'
 import Register from './components/Register'
+import Article from './components/Article'
+import ArticleBuilder from './components/ArticleBuilder'
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         } />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/article" element={<Article />} />
+        <Route path="/article-builder" element={<ArticleBuilder />} />
       </Routes>
     </div>
   </Router>
