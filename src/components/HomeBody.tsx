@@ -1,6 +1,11 @@
 import CardFunc from "./CardFunc";
+import { SearchResponse } from "../types";
 
-const HomeBody = () => {
+type HomeBodyProps = {
+    response : SearchResponse
+}
+
+const HomeBody = (response: HomeBodyProps) => {
     return (
         <div>
             <div className="flex items-center">
@@ -18,10 +23,10 @@ const HomeBody = () => {
 
             <section className="mt-10">
                 <h2 className="primary-nav">
-                    Search Query
+                    {response.response.prompt}
                 </h2>
                 <p className="mt-10">
-                    Answer
+                    {response.response.response}
                 </p>
             </section>
         </div>
