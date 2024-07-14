@@ -6,9 +6,11 @@ import Register from './components/Register'
 import Article from './components/Article'
 import ArticleBuilder from './components/ArticleBuilder'
 import Home from './components/Home'
+import { AuthProvider } from './AuthContext';
 
 function App() {
   return (
+    <AuthProvider>
     <Router>
     <div className='mx-10'>
       <Routes>
@@ -20,6 +22,7 @@ function App() {
       </Routes>
     </div>
   </Router>
+  </AuthProvider>
   )
 }
 

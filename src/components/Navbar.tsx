@@ -1,8 +1,20 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { Button } from "react-bootstrap";
+import Login from "./Login";
+import { Link } from "react-router-dom";
 import "../index.css";
+import LoginService from "../services/LoginService";
+import { AuthContext } from '../AuthContext';  
 
 const Navbar = () => {
+  const authContext = useContext(AuthContext);
+
+    if (!authContext) {
+        return null;
+    }
+
+    const { isAuthenticated, logout } = authContext;
+
     return (
         <nav id="mainNav" className="navbar navbar-expand-md fixed top-0 w-full bg-white ">
         <div className="container mx-auto px-4">
@@ -23,7 +35,23 @@ const Navbar = () => {
               </li>
             </ul>
             <button className="bg-primary text-white px-4 py-2 rounded-lg">Ask</button>
-            <button className="text-black px-4 py-2 rounded-lg button-login">Login</button>
+            <div>
+            {isAuthenticated ? (
+                <button
+                    className="text-white px-4 py-2 rounded-lg bg-primary"
+                    onClick={logout}
+                >
+                    Logout
+                </button>
+            ) : (
+                <Link to="/login">
+                    <button className="text-black px-4 py-2 rounded-lg button-login">
+                        Login
+                    </button>
+                </Link>
+            )}
+            {/* Other Home component content */}
+        </div>
           </div>
         </div>
       </nav>
