@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "../index.css";
 import LoginService from "../services/LoginService";
 import { AuthContext } from '../AuthContext';  
+import UserMenu from "./UserMenu";
 
 const Navbar = () => {
   const authContext = useContext(AuthContext);
@@ -25,9 +26,6 @@ const Navbar = () => {
           <div className="hidden md:flex md:items-center md:space-x-4 md:ml-auto">
             <ul className="flex items-center space-x-4">
               <li className="nav-item">
-                <a className="nav-link primary-nav" href="/dashboard">Dashboard</a>
-              </li>
-              <li className="nav-item">
                 <a className="nav-link primary-nav" href="/article">Articles</a>
               </li>
               <li className="nav-item">
@@ -37,12 +35,7 @@ const Navbar = () => {
             <button className="bg-primary text-white px-4 py-2 rounded-lg">Ask</button>
             <div>
             {isAuthenticated ? (
-                <button
-                    className="text-white px-4 py-2 rounded-lg bg-primary"
-                    onClick={logout}
-                >
-                    Logout
-                </button>
+                <UserMenu logout={logout} />
             ) : (
                 <Link to="/login">
                     <button className="text-black px-4 py-2 rounded-lg button-login">
