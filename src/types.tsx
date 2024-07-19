@@ -13,3 +13,32 @@ export type SearchResponse = {
     response: string;
     created_at: string;
 };
+
+export type ArticleListResponse = {
+    articles_list: ArticleResponse[];
+}
+
+export type ArticleResponse = {
+    id: number;
+    title: string;
+    author: string;
+    created_at: string;
+    updated_at: string;
+    published: boolean;
+    sections: SectionResponse[];
+    comments: CommentResponse[];
+}
+
+export type SectionResponse = {
+    id: number;
+    body: string;
+    order: number;
+    article: number;
+}
+
+export type CommentResponse = {
+    id: number;
+    body: string;
+    article: number;
+    created_at: string;
+}

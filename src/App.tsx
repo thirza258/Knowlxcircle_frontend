@@ -7,6 +7,7 @@ import Article from './components/Article'
 import ArticleBuilder from './components/ArticleBuilder'
 import Home from './components/Home'
 import { AuthProvider } from './AuthContext';
+import ArticleList from './components/ArticleList';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/article" element={<Article />} />
+        <Route path="/article/:id" element={<Article />} />
+        <Route path="/article" element={<ArticleList />} />
         <Route path="/article-builder" element={<ArticleBuilder />} />
       </Routes>
     </div>
