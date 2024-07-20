@@ -10,11 +10,15 @@ const Register = () => {
                 </div>
                 <div className="relative mt-2">
                     <input type="password" className="py-2 px-2 text-black w-full bg-white rounded-[6px]" placeholder="Password" />
-                    
                 </div>
                 <div className="relative mt-2">
-                    <input type="password" className="py-2 px-2 text-black w-full bg-white rounded-[6px]" placeholder="Password" />
-                    
+                    <input type="password" className="py-2 px-2 text-black w-full bg-white rounded-[6px]" placeholder="Confirm Password" />
+                </div>
+                <div className="relatice mt-2">
+                    <input type="email" className="py-2 px-2 text-black w-full bg-white rounded-[6px]" placeholder="Email" />
+                </div>
+                <div className="relative mt-2">
+                    <input type="text" className="py-2 px-2 text-black w-full bg-white rounded-[6px]" placeholder="Occupation" />
                 </div>
                 <button className="btn-primary text-black bg-white w-full mt-5">Login</button>
                 <div className="flex space-x-4 mt-4">
