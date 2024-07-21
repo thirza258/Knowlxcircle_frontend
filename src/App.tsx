@@ -11,6 +11,8 @@ import ArticleList from './components/ArticleList';
 import Circle from './components/Circle';
 import CircleList from './components/CircleList';
 import CreateCircle from './components/CreateCircle';
+import Dashboard from './components/Dashboard';
+import UserPage from './components/UserPage';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="/circle" element={<CircleList />} />
         <Route path="/circle/:id" element={<Circle />} />
         <Route path="/create-circle" element={<CreateCircle />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/user" element={<UserPage />} />
       </Routes>
     </div>
   </Router>

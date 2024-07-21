@@ -23,14 +23,25 @@ const UserMenu = ({ logout }: { logout: () => void }) => (
                 </Menu.Item>
                 <Menu.Item>
                     {({ active }) => (
+                            <Link
+                            to="/user"
+                            className={`block px-4 py-2 text-sm ${active ? 'bg-gray-100' : ''}`}
+                        >
+                            User Page
+                        </Link>
+                    )}
+                </Menu.Item>
+                <Menu.Item>
+                    {({ active }) => (
                         <button
                             onClick={logout}
-                            className={`block w-full text-left px-4 py-2 bg-white text-sm ${active ? 'bg-gray-100' : ''}`}
+                            className={`block w-full mt-5 text-left px-4 py-2 bg-white text-sm ${active ? 'bg-gray-100' : ''}`}
                         >
                             Logout
                         </button>
                     )}
                 </Menu.Item>
+                
             </div>
         </Menu.Items>
     </Menu>
