@@ -38,7 +38,6 @@ const Footer = () => {
             </div>
             <hr />
             <div className="d-flex justify-content-between align-items-center pt-3">
-                <p className="text-muted mb-0">MIT LICENSE </p>
                 <p className="text-muted mb-0">Copyright © 2024 Knowlxcircle </p>
                 <ul className="list-inline mb-0">
                     <li className="list-inline-item"><svg className="bi bi-facebook" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">

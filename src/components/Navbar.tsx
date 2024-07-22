@@ -19,7 +19,7 @@ const Navbar = () => {
     return (
         <nav id="mainNav" className="navbar navbar-expand-md top-0 w-full bg-white ">
         <div className="container mx-auto px-4">
-          <a className="navbar-brand primary-nav text-xl font-bold title" href="#">Knowlxcircle</a>
+          <p className="text-xl font-bold title"><Link to="/">Knowlxcircle</Link></p>
           <button className="navbar-toggler block md:hidden" aria-controls="navbarResponsive" aria-expanded="false">
             <i className="fa fa-bars"></i>
           </button>
