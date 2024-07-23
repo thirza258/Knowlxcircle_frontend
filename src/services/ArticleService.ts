@@ -12,6 +12,8 @@ const getArticlesById = async (id: number) => {
     return response.data.response;
 }
 
+
+
 export default {
     getArticles,
     getArticlesById
