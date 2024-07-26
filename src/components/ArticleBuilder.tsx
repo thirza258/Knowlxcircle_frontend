@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import ModalCreateArticle from "./ModalCreateArticle";
 import axios from "axios";
 import ArticleService from "../services/ArticleService";
-import { ArticleResponse } from "../types";
+import { ArticleResponse, SectionResponse } from "../types";
+import { redirect, useNavigate } from "react-router-dom";
+
 
 const ArticleBuilder: React.FC = () => {
   const [title, setTitle] = useState<string>("");
@@ -12,6 +14,8 @@ const ArticleBuilder: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalText, setModalText] = useState<string>("");
+
+  const navigate = useNavigate();
 
   const addSection = () => {
     setSections((prevSections) => [...prevSections, ""]);
@@ -78,7 +82,7 @@ const ArticleBuilder: React.FC = () => {
     const response = await ArticleService.getArticlesById(id);
     setArticle(response);
     setTitle(response.title);
-    setSections(response.sections)
+    setSections(response.sections.map((section: SectionResponse) => section.body));
     console.log(modalText);
   };
 
@@ -90,6 +94,7 @@ const ArticleBuilder: React.FC = () => {
       sections.forEach(async (section, index) => {
         await ArticleService.postSection(articleId, section, index);
       });
+      navigate(`/article/${articleId}`);
     } catch (error) {
       console.error("Error creating article:", error);
     }
