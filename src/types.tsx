@@ -29,6 +29,16 @@ export type ArticleResponse = {
     comments: CommentResponse[];
 }
 
+export type GeminiResponse = {
+    id: number;
+    title: string;
+    author: string;
+    created_at: string;
+    updated_at: string;
+    published: boolean;
+    sections: SectionResponse[];
+}
+
 export type SectionResponse = {
     id: number;
     body: string;

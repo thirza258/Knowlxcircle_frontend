@@ -12,9 +12,28 @@ const getArticlesById = async (id: number) => {
     return response.data.response;
 }
 
+const postArticleTitle = async (title: string) => {
+    const response = await axios.post(`${devBaseUrl}v1/article/title/`, {
+        title: title,
+        author: "Gemini API",
+        published: true
+    });
+    return response.data.response;
+}
+
+const postSection = async (articleId: number, body: string, order: number) => {
+    const response = await axios.post(`${devBaseUrl}v1/article/section/`, {
+        body: body,
+        order: order,
+        article_id: articleId
+    });
+    return response.data.response;
+}
 
 
 export default {
     getArticles,
-    getArticlesById
+    getArticlesById,
+    postArticleTitle, 
+    postSection
 }
