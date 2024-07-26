@@ -29,6 +29,16 @@ export type ArticleResponse = {
     comments: CommentResponse[];
 }
 
+export type GeminiResponse = {
+    id: number;
+    title: string;
+    author: string;
+    created_at: string;
+    updated_at: string;
+    published: boolean;
+    sections: SectionResponse[];
+}
+
 export type SectionResponse = {
     id: number;
     body: string;
@@ -41,4 +51,18 @@ export type CommentResponse = {
     body: string;
     article: number;
     created_at: string;
+}
+
+export type CircleListResponse = {
+    circles: CircleResponse[];
+}
+
+export type CircleResponse = {
+    id: number;
+    name: string;
+    description: string;
+    members: number;
+    created_at: string;
+    updated_at: string;
+    sentiment: string;
 }

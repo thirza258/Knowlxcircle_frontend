@@ -1,3 +1,7 @@
+import React, {useState, useEffect} from "react";
+import axios from "axios";
+
+
 const Circle = () => {
   return (
     <div className="flex p-4">
@@ -6,6 +10,7 @@ const Circle = () => {
           <div>Circle for Finance</div>
           <div>Description</div>
         </div>
+        <h2>Their Article</h2>
         <div>
           <div className="flex w-full items-center justify-between p-4 border-b bg-gray-200">
             <div>

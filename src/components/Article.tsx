@@ -28,9 +28,9 @@ const Article = () => {
   }
 
   return (
-    <div className="grid grid-cols-5 gap-4">
+    <div className="grid grid-cols-5">
       {/* First column, first row */}
-      <div className="col-span-1 row-span-1 bg-gray-200 p-4">{/* Empty */}</div>
+      <div className="col-span-1 row-span-1 bg-gray-200 p-4 border-r-2 border-gray-500">{/* Empty */}</div>
 
       {/* Second column, first row */}
       <div className="col-span-4 row-span-1 bg-gray-300 p-4">
@@ -40,13 +40,13 @@ const Article = () => {
       </div>
 
       {/* First column, second row */}
-      <div className="col-span-1 row-span-1 bg-gray-200 p-4 border-r-2 border-gray-500">
+      <div className="col-span-1 row-span-1 bg-gray-200 p-4 border-r-2 border-gray-500 h-[100vh]">
         <div>{article.author}</div>
         <div>Role</div>
       </div>
 
       {/* Second column, second row */}
-      <div className="col-span-4 row-span-1 bg-gray-300 p-4 border-l-2 border-gray-500">
+      <div className="col-span-4 row-span-1 bg-gray-300 p-4 ">
         {article.sections.map((section) => (
           <div
             key={section.id}
@@ -63,7 +63,7 @@ const Article = () => {
       </div>
 
       {/* Second column, third row */}
-      <div className="col-span-4 row-span-1 bg-gray-300 p-4 border-l-2 border-gray-500">
+      <div className="col-span-4 row-span-1 bg-gray-300 p-4 ">
         <div className="font-bold text-black text-center font-sans text-lg">
           <p className="font-bold">Comments</p>
         </div>
