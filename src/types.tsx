@@ -52,3 +52,17 @@ export type CommentResponse = {
     article: number;
     created_at: string;
 }
+
+export type CircleListResponse = {
+    circles: CircleResponse[];
+}
+
+export type CircleResponse = {
+    id: number;
+    name: string;
+    description: string;
+    members: number;
+    created_at: string;
+    updated_at: string;
+    sentiment: string;
+}
