@@ -136,3 +136,8 @@ button:focus-visible {
   color: black;
   padding-left: 20px;
 }
+
+.horizontal-line {
+  border-top: 1px solid #000; /* Tailwind gray-300 */
+  margin: 5px 0;
+}

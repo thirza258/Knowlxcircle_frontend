@@ -13,6 +13,7 @@ import CircleList from './components/CircleList';
 import CreateCircle from './components/CreateCircle';
 import Dashboard from './components/Dashboard';
 import UserPage from './components/UserPage';
+import Chatbot from './components/Chatbot';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/create-circle" element={<CreateCircle />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/user" element={<UserPage />} />
+        <Route path="/askbot" element={<Chatbot />} />
       </Routes>
     </div>
   </Router>

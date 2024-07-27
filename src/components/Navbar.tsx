@@ -1,17 +1,22 @@
 import React, {useState, useContext} from "react";
 import { Button } from "react-bootstrap";
 import Login from "./Login";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../index.css";
 import LoginService from "../services/LoginService";
 import { AuthContext } from '../AuthContext';  
 import UserMenu from "./UserMenu";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const authContext = useContext(AuthContext);
 
     if (!authContext) {
         return null;
+    }
+
+    const handleAsk = () => {
+        navigate("/askbot");
     }
 
     const { isAuthenticated, logout } = authContext;
@@ -32,7 +37,9 @@ const Navbar = () => {
                 <a className="nav-link primary-nav" href="/circle">Circle</a>
               </li>
             </ul>
-            <button className="bg-primary text-white px-4 py-2 rounded-lg">Ask</button>
+
+            <button onClick={handleAsk} className="bg-primary text-white px-4 py-2 rounded-lg">Ask</button>
+            
             <div>
             {isAuthenticated ? (
                 <UserMenu logout={logout} />
