@@ -66,3 +66,14 @@ export type CircleResponse = {
     updated_at: string;
     sentiment: string;
 }
+
+export type PromptResponse = {
+    id: number;
+    prompt: string;
+    response: string;
+    created_at: string;
+}
+
+export type PromptListResponse = {
+    prompts: PromptResponse[];
+}

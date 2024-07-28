@@ -141,3 +141,19 @@ button:focus-visible {
   border-top: 1px solid #000; /* Tailwind gray-300 */
   margin: 5px 0;
 }
+
+.gradient-border {
+  position: relative;
+  display: inline-block;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: -2px;
+  right: -2px;
+  z-index: -1;
+  background: linear-gradient(90deg, #0000ff, #00ffff);
+  border-radius: 8px;
+}

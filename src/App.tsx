@@ -33,6 +33,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/askbot" element={<Chatbot />} />
+        <Route path="/askbot/:id" element={<Chatbot />} />
       </Routes>
     </div>
   </Router>
