@@ -1,10 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import react_image from "../assets/react.svg";
 import DashboardCard from "./DashboardCard";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import DashboardService from "../services/DashboardService";
 
 const Dashboard = () => {
+  const [data, setData] = useState<any>(null);
+
+  const navigate = useNavigate();
+
   return (
     <div>
       <Navbar />
