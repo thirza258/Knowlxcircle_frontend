@@ -4,6 +4,7 @@ import loginService from "../services/LoginService";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 
 type HomeBodyProps = {
   response: SearchResponse;
@@ -44,7 +45,7 @@ const HomeBody = (props: HomeBodyProps) => {
 
       <section className="mt-10">
         <h2 className="primary-nav">{props.response.prompt}</h2>
-        <p className="mt-10">{props.response.response}</p>
+        <p className="mt-10">{<ReactMarkdown>{props.response.response}</ReactMarkdown>}</p>
       </section>
     </div>
   );

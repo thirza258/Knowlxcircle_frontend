@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { CircleListResponse, CircleResponse } from "../types";
 import { useState, useEffect } from "react";
 import CircleService from "../services/CircleService";
+import Navbar from "./Navbar";
 
 const CircleList = () => {
   const [circles, setCircles] = useState<CircleResponse[] | null>(null);
@@ -31,6 +32,8 @@ const CircleList = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="flex pt-10">
       <div className="w-[10vw] h-[100vh] bg-black">
         <div className="text-white p-3">
@@ -76,6 +79,7 @@ const CircleList = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 
