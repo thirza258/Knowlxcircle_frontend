@@ -83,7 +83,6 @@ const ArticleBuilder: React.FC = () => {
     setArticle(response);
     setTitle(response.title);
     setSections(response.sections.map((section: SectionResponse) => section.body));
-    console.log(modalText);
   };
 
   const createArticle = async () => {
