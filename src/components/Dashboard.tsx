@@ -1,10 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import react_image from "../assets/react.svg";
 import DashboardCard from "./DashboardCard";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import Markdown from "react-markdown";
+import { useEffect, useState } from "react";
+import DashboardService from "../services/DashboardService";
+import { ArticleDashboardListResponse } from "../types";
 
 const Dashboard = () => {
+  const [data, setData] = useState<ArticleDashboardListResponse | null>(null);
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      const fetchedData = await DashboardService.getData();
+      console.log("Fetched dashboard data:", fetchedData);
+      setData(fetchedData);
+    } catch (error) {
+      console.error("Error fetching the dashboard data:", error);
+    }
+  };
+
+  useEffect(() => {
+
+
+    fetchData();
+  }, []);
+
+  if (data === null) {
+    return <p>Loading...</p>; // Show loading state when data is null
+  }
+
+  if (data.articles.length === 0) {
+    return <p>No articles available</p>; // Handle empty articles case
+  }
+
   return (
     <div>
       <Navbar />
@@ -54,28 +85,29 @@ const Dashboard = () => {
             </div>
             <div className="bg-gray-300 rounded-lg shadow-lg p-4 m-3 flex-1">
               <p>Overall Sentiment: </p>
-              <p>Good</p>
+              <p>{data.sentiment}</p>
             </div>
             <div className="bg-gray-300 rounded-lg shadow-lg p-4 m-3 flex-1">
               <p>Knowledge Created: </p>
-              <p>1234</p>
+              <p>{data.count}</p>
             </div>
             <div className="bg-gray-300 rounded-lg shadow-lg p-4 m-3 flex-1">
               <p>Views: </p>
-              <p>1234</p>
+              <p>{data.views}</p>
             </div>
           </div>
-          <div className="my-5 text-center">
+          <div className="my-5 r">
             <div id="AI">
-              <p>AI Explain</p>
+              <p ><Markdown>{data?.explain}</Markdown></p>
             </div>
           </div>
           <div id="article_analytics">
-          <DashboardCard />
-          <DashboardCard />
-          </div>
+      {data.articles.map((article) => (
+        <DashboardCard key={article.id} article={article} />
+      ))}
+    </div>
           <div className="m-4">
-            Recommendation
+            <Markdown>{data?.recommendation}</Markdown>
           </div>
         </div>
       </div>

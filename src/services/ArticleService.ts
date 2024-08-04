@@ -30,10 +30,20 @@ const postSection = async (articleId: number, body: string, order: number) => {
     return response.data.response;
 }
 
+const EditSection = async (sectionId: number, body: string, order: number) => {
+    const response = await axios.put(`${devBaseUrl}v1/article/section/`, {
+        id : sectionId,
+        body: body,
+        order: order,
+    });
+    return response.data.response;
+}
+
 
 export default {
     getArticles,
     getArticlesById,
     postArticleTitle, 
-    postSection
+    postSection,
+    EditSection
 }

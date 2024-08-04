@@ -77,3 +77,20 @@ export type PromptResponse = {
 export type PromptListResponse = {
     prompts: PromptResponse[];
 }
+
+export type ArticleDashboard = {
+    id: number;
+    title: string;
+    description: string;
+    count_view: number;
+    sentiment: string;
+}
+
+export type ArticleDashboardListResponse = {
+    articles: ArticleDashboard[];
+    explain: string;
+    recommendation: string;
+    views: number;
+    sentiment: string;
+    count: number;
+}

@@ -1,21 +1,29 @@
 import CardFunc from "./CardFunc";
 import { SearchResponse } from "../types";
-import loginService from "../services/LoginService";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../AuthContext";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import { ReactTyped } from "react-typed";
 
 type HomeBodyProps = {
   response: SearchResponse;
 };
 
 const HomeBody = (props: HomeBodyProps) => {
+  const [typedText, setTypedText] = useState<string>('');
+  const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
     return null;
   }
+
+  useEffect(() => {
+    // Initialize typed text with the response text.
+    setTypedText(props.response.response);
+    setIsTypingComplete(false); // Reset typing completion when response changes
+  }, [props.response.response]);
 
   const { isAuthenticated } = authContext;
 
@@ -45,7 +53,29 @@ const HomeBody = (props: HomeBodyProps) => {
 
       <section className="mt-10">
         <h2 className="primary-nav">{props.response.prompt}</h2>
-        <p className="mt-10">{<ReactMarkdown>{props.response.response}</ReactMarkdown>}</p>
+        <div className="mt-10">
+        <div>
+          {!isTypingComplete && (
+            <ReactTyped
+              strings={[props.response.response]}
+              typeSpeed={100}
+              loop
+              backSpeed={50}
+              startDelay={500}
+              showCursor
+              cursorChar="|"
+              onComplete={(self) => {
+                setIsTypingComplete(true);
+              }}
+            />
+          )}
+          </div>
+          {isTypingComplete && (
+            <div>
+              <ReactMarkdown>{typedText}</ReactMarkdown>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

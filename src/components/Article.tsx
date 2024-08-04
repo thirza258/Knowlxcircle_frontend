@@ -4,6 +4,7 @@ import ArticleService from "../services/ArticleService";
 import { ArticleResponse, SectionResponse } from "../types";
 import Footer from "./Footer";
 import { useParams } from "react-router-dom";
+import Markdown from "react-markdown";
 
 const Article = () => {
   const [article, setArticle] = useState<ArticleResponse | null>(null);
@@ -52,7 +53,9 @@ const Article = () => {
             key={section.id}
             className="font-bold text-black font-sans text-base"
           >
-            {section.order + 1}. {section.body}
+          <Markdown>
+            {`${section.order + 1}. ${section.body}`}
+          </Markdown>
           </div>
         ))}
       </div>
