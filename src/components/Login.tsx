@@ -30,6 +30,10 @@ const Login = () => {
         }
     };
 
+    const handleRegister = () => {
+        navigate('/register'); 
+    }
+
     return (
         <div className="flex-col px-10 py-10 items-center justify-center">
             <div className="flex items-center justify-center bg-gray-300">
@@ -60,14 +64,20 @@ const Login = () => {
                     >
                         Login
                     </button>
-                    <div className="flex space-x-4 mt-4">
+                    {/* <div className="flex space-x-4 mt-4">
                         <button className="btn-primary flex-1 bg-white w-full">
                             <p className="title">Google</p>
                         </button>
                         <button className="btn-primary flex-1 bg-white w-full">
                             <p className="title">Facebook</p>
                         </button>
-                    </div>
+                    </div> */}
+                    <button
+                        className="btn-primary text-black bg-white w-full mt-2"
+                        onClick={handleRegister}
+                    >
+                        Register
+                    </button>
                 </div>
                 <div className="flex-1">
                     <div className="bg-blue-500 w-[80wh] h-[80vh]"></div>
