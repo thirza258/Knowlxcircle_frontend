@@ -33,12 +33,14 @@ const UserMenu = ({ logout }: { logout: () => void }) => (
                 </Menu.Item>
                 <Menu.Item>
                     {({ active }) => (
+                        <Link to="/">
                         <button
                             onClick={logout}
                             className={`block w-full mt-5 text-left px-4 py-2 bg-white text-sm ${active ? 'bg-gray-100' : ''}`}
                         >
                             Logout
                         </button>
+                        </Link>
                     )}
                 </Menu.Item>
                 
