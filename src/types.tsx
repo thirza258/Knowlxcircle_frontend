@@ -94,3 +94,22 @@ export type ArticleDashboardListResponse = {
     sentiment: string;
     count: number;
 }
+
+export type ArticleSearchResponse = {
+    id: number;
+    title: string;
+}
+
+export type SimpleArticleResponse = {
+    id: number;
+    title: string;
+}
+
+export type SingleCircleResponse = {
+    id: number;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+    article: SimpleArticleResponse[];
+}

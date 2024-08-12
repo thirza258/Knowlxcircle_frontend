@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import ArticleService from "../services/ArticleService";
-import { ArticleResponse, SectionResponse } from "../types";
+import { ArticleResponse, SectionResponse, CircleResponse } from "../types";
 import Footer from "./Footer";
 import { useParams } from "react-router-dom";
 import Markdown from "react-markdown";
+import { Dropdown } from "react-bootstrap";
+import CircleService from "../services/CircleService";
+import Navbar from "./Navbar";
 
 const Article = () => {
   const [article, setArticle] = useState<ArticleResponse | null>(null);
   const { id } = useParams<{ id: string }>();
   const articleId = parseInt(id ?? "");
+  const [circle, setCircle] = useState<CircleResponse[] | null>(null);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -21,14 +25,37 @@ const Article = () => {
       }
     };
 
+    const fetchCircle = async () => {
+      try {
+        const circleData = await CircleService.GetAllCircles();
+        setCircle(circleData.circles);
+      } catch (error) {
+        console.error("Error fetching the circle:", error);
+      }
+    }
+
     fetchArticle();
+    fetchCircle();
   }, []);
 
   if (!article) {
     return <div>Loading...</div>;
   }
 
+  const handleCircle = (circleId: number) => async () => {
+    try {
+      const response = await CircleService.associate(circleId, articleId);
+      if (response.message === "Success") {
+        alert("Article associated with the circle");
+      }
+    } catch (error) {
+      console.error("Error updating the article circle:", error);
+    }
+  }
+
   return (
+    <>
+    <Navbar />
     <div className="grid grid-cols-5">
       {/* First column, first row */}
       <div className="col-span-1 row-span-1 bg-gray-200 p-4 border-r-2 border-gray-500">{/* Empty */}</div>
@@ -42,8 +69,17 @@ const Article = () => {
 
       {/* First column, second row */}
       <div className="col-span-1 row-span-1 bg-gray-200 p-4 border-r-2 border-gray-500 h-[100vh]">
+        <div>
         <div>{article.author}</div>
         <div>Role</div>
+        </div>
+        <div>
+          <Dropdown>
+            {circle?.map((circle) => (
+              <Dropdown.Item key={circle.id} onClick={handleCircle(circle.id)}>{circle.name}</Dropdown.Item>
+            ))}
+          </Dropdown>
+        </div>
       </div>
 
       {/* Second column, second row */}
@@ -79,6 +115,7 @@ const Article = () => {
         <Footer />
       </div>
     </div>
+    </>
   );
 };
 
