@@ -60,7 +60,7 @@ const Chatbot = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-grow flex p-2 h-full">
-        <div className="w-[20vw] h-full overflow-y-auto">
+        <div className="w-[20vw] h-[100vh] overflow-y-auto">
           <div className="text-black p-3">
             <p>User</p>
             <p>Role</p>
@@ -87,7 +87,7 @@ const Chatbot = () => {
 
         <div className="border-l-2 border-black h-full"></div>
 
-        <div className="w-[80vw] flex flex-col h-full">
+        <div className="w-[80vw] flex flex-col h-[100vh]">
           <div className="flex-grow">
             <div className="p-3">
               <div className="horizontal-line"></div>
@@ -118,10 +118,8 @@ const Chatbot = () => {
               id="askNewButton"
               className="w-full my-2 gradient-border bg-white text-black px-4 py-2 rounded-lg shadow-md"
               onClick={() => {
-                // Handle button click logic here
                 console.log("Button clicked");
                 handleAskNew();
-                // You can also call a function to handle the prompt generation
               }}
             >
               Generate

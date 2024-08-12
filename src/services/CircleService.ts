@@ -15,7 +15,22 @@ const GetAllCircles = async () : Promise<CircleListResponse> => {
     return response.data.response;
 }
 
+const getCircle = async (id: string) => {
+    const response = await axios.get(`${apiBaseUrl}v1/circle/circles/${id}/`);
+    return response.data.response;
+}
+
+const associate = async (circleId: number, articleId: number) => {
+    const response = await axios.post(`${apiBaseUrl}v1/circle/associate/`, {
+        circle_id: circleId,
+        article_id: articleId
+    });
+    return response.data;
+}
+
 export default {
     PostCircleArticle,
-    GetAllCircles
+    GetAllCircles,
+    getCircle,
+    associate
 }

@@ -10,7 +10,7 @@ const ArticleBuilder: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [article, setArticle] = useState<ArticleResponse | null>(null);
   const [idArticle, setIdArticle] = useState<number>(0);
-  const [sections, setSections] = useState<string[]>([""]); // Initial decoy section
+  const [sections, setSections] = useState<string[]>([""]); 
   const [step, setStep] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalText, setModalText] = useState<string>("");
@@ -170,13 +170,6 @@ const ArticleBuilder: React.FC = () => {
                         onClick={() => deleteSection(index)}
                       >
                         Delete Section
-                      </button>
-                      <button
-                        type="button"
-                        className="text-white bg-blue-500 mb-1"
-                        onClick={() => moveSectionDown(index)}
-                      >
-                        Generate Gemini
                       </button>
                       <button
                         type="button"
