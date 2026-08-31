@@ -1,36 +1,50 @@
-import axios from "axios";
-import { devBaseUrl, apiBaseUrl } from "../constants";
-import { CircleListResponse } from "../types";
+import api, { unwrap } from "./apiClient";
+import type {
+    ApiEnvelope,
+    ApiMessage,
+    CircleListResponse,
+    CreateCircleResponse,
+    SingleCircleResponse,
+} from "../types";
 
-const PostCircleArticle = async (name: string, description: string) => {
-    const response = await axios.post(`${apiBaseUrl}v1/circle/create/`, {
-        name: name,
-        description: description
-    });
-    return response.data.response;
-}
+const PostCircleArticle = (
+    name: string,
+    description: string,
+): Promise<CreateCircleResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<CreateCircleResponse>>("v1/circle/create/", {
+            name: name,
+            description: description,
+        }),
+    );
 
-const GetAllCircles = async () : Promise<CircleListResponse> => {
-    const response = await axios.get(`${apiBaseUrl}v1/circle/circles/`);
-    return response.data.response;
-}
+const GetAllCircles = (): Promise<CircleListResponse> =>
+    unwrap(api.get<ApiEnvelope<CircleListResponse>>("v1/circle/circles/"));
 
-const getCircle = async (id: string) => {
-    const response = await axios.get(`${apiBaseUrl}v1/circle/circles/${id}/`);
-    return response.data.response;
-}
+const getCircle = (id: string): Promise<SingleCircleResponse> =>
+    unwrap(api.get<ApiEnvelope<SingleCircleResponse>>(`v1/circle/circles/${id}/`));
 
-const associate = async (circleId: number, articleId: number) => {
-    const response = await axios.post(`${apiBaseUrl}v1/circle/associate/`, {
+/**
+ * The associate endpoint answers `{ status, message }` with no `response` key,
+ * so this one deliberately returns the envelope instead of unwrapping it -
+ * callers check `result.message === "Success"`.
+ */
+const associate = async (
+    circleId: number,
+    articleId: number,
+): Promise<ApiMessage> => {
+    const { data } = await api.post<ApiMessage>("v1/circle/associate/", {
         circle_id: circleId,
-        article_id: articleId
+        article_id: articleId,
     });
-    return response.data;
-}
+    return data;
+};
 
-export default {
+const CircleService = {
     PostCircleArticle,
     GetAllCircles,
     getCircle,
-    associate
-}
+    associate,
+};
+
+export default CircleService;

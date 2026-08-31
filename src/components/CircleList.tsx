@@ -1,29 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
-import { CircleListResponse, CircleResponse } from "../types";
+import type { CircleListResponse, CircleResponse } from "../types";
 import { useState, useEffect } from "react";
 import CircleService from "../services/CircleService";
 import Navbar from "./Navbar";
 
 const CircleList = () => {
-  const [circles, setCircles] = useState<CircleResponse[] | null>(null);
-
-  const fetchCircles = async () => {
-    try {
-      const circlesData: CircleListResponse = await CircleService.GetAllCircles();
-      console.log("Fetched circles data:", circlesData);
-      setCircles(circlesData.circles);
-    } catch (error) {
-      console.error("Error fetching the circles:", error);
-    }
-  };
+  const [circles, setCircles] = useState<CircleResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCircles();
+    let ignore = false;
+
+    const fetchCircles = async (): Promise<void> => {
+      try {
+        const circlesData: CircleListResponse = await CircleService.GetAllCircles();
+        if (!ignore) {
+          setCircles(circlesData.circles ?? []);
+          setError(null);
+        }
+      } catch (err) {
+        console.error("Error fetching the circles:", err);
+        if (!ignore) {
+          setCircles([]);
+          setError("The circles could not be loaded. Please try again.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void fetchCircles();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
-
-  useEffect(() => {
-    console.log("State circles:", circles);
-  }, [circles]);
 
   const navigate = useNavigate();
 
@@ -45,7 +59,13 @@ const CircleList = () => {
         <div>
           <h1 className="text-2xl font-semibold mb-4">Circle</h1>
         </div>
-        {circles?  (
+        {loading && <div>Loading...</div>}
+        {!loading && error !== null && <div>{error}</div>}
+        {!loading && error === null && circles.length === 0 && (
+          <div>No circles have been created yet.</div>
+        )}
+        {!loading &&
+          error === null &&
           circles.map((circle) => (
             <div key={circle.id}>
               <Link to={`/circle/${circle.id}`}>
@@ -66,10 +86,7 @@ const CircleList = () => {
                 </div>
               </Link>
             </div>
-          ))
-        ) : (
-          <div>Loading...</div>
-        )}
+          ))}
 
         <button
           onClick={handleClick}

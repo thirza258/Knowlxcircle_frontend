@@ -1,22 +1,24 @@
-import axios from "axios";
-import { apiBaseUrl, devBaseUrl } from "../constants";
-import { HomeResponse, SearchResponse } from "../types";
+import api, { unwrap } from "./apiClient";
+import type { ApiEnvelope, SearchResponse } from "../types";
 
-const getData = async (): Promise<SearchResponse> => {
-    const response = await axios.get<HomeResponse>(`${apiBaseUrl}v1/gemini/`);
-    return response.data.response;
-}
+const getData = (): Promise<SearchResponse> =>
+    unwrap(api.get<ApiEnvelope<SearchResponse>>("v1/gemini/"));
 
-const searchGemini = async (query: string): Promise<SearchResponse> => {
-    const payload = {
-        "search_query": query
-    };
+/**
+ * Used to be typed `Promise<SearchResponse>` while returning `response.data`,
+ * i.e. the whole `{ status, message, response }` envelope. It now resolves with
+ * the payload its type has always promised.
+ */
+const searchGemini = (query: string): Promise<SearchResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<SearchResponse>>("v1/gemini/", {
+            search_query: query,
+        }),
+    );
 
-    const response = await axios.post<SearchResponse>(`${apiBaseUrl}v1/gemini/`, payload);
-    return response.data;
-}
-
-export default {
+const HomeService = {
     getData,
-    searchGemini
-}
+    searchGemini,
+};
+
+export default HomeService;

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginService from "../services/LoginService";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,25 +13,57 @@ const Register = () => {
   const [email, setEmail] = useState<string>("");
   const [occupation, setOccupation] = useState<string>("");
   const [bio, setBio] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const validate = (): string | null => {
+    if (username.trim() === "") {
+      return "Username is required.";
+    }
+    if (password === "") {
+      return "Password is required.";
+    }
+    if (password !== confirmPassword) {
+      return "Passwords do not match.";
+    }
+    if (email.trim() === "") {
+      return "Email is required.";
+    }
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      return "Please enter a valid email address.";
+    }
+    return null;
+  };
 
   const handleRegister = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    const validationError = validate();
+    if (validationError !== null) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
+    setIsSubmitting(true);
+
     try {
-      if (password !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      } else {
-        const response = await LoginService.register(
-          username,
-          password,
-          email,
-          occupation,
-          bio
-        );
-        navigate("/login");
-        alert(response)
-      }
-    } catch (error) {
-      console.error("Register error:", error);
+      await LoginService.register(
+        username,
+        password,
+        email,
+        occupation,
+        bio
+      );
+      navigate("/login");
+    } catch (err: unknown) {
+      console.error("Register error:", err);
+      setError(
+        "Registration failed. Please check your details and try again."
+      );
+      setIsSubmitting(false);
     }
   };
 
@@ -42,12 +76,15 @@ const Register = () => {
       <div className="flex items-center justify-center bg-gray-300">
         <div className="flex-1 mx-10">
           <h1 className="primary-header title">Register</h1>
+          {error !== null && <p className="text-red-500">{error}</p>}
           <div className="relative mt-2">
             <input
               type="text"
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Username"
               value={username}
+              autoComplete="username"
+              disabled={isSubmitting}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
@@ -57,6 +94,8 @@ const Register = () => {
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Password"
               value={password}
+              autoComplete="new-password"
+              disabled={isSubmitting}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
@@ -66,6 +105,8 @@ const Register = () => {
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Confirm Password"
               value={confirmPassword}
+              autoComplete="new-password"
+              disabled={isSubmitting}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
@@ -75,6 +116,8 @@ const Register = () => {
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Email"
               value={email}
+              autoComplete="email"
+              disabled={isSubmitting}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -84,6 +127,7 @@ const Register = () => {
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Occupation"
               value={occupation}
+              disabled={isSubmitting}
               onChange={(e) => setOccupation(e.target.value)}
             />
           </div>
@@ -93,17 +137,24 @@ const Register = () => {
               className="py-2 px-2 text-black w-full bg-white rounded-[6px]"
               placeholder="Bio"
               value={bio}
+              disabled={isSubmitting}
               onChange={(e) => setBio(e.target.value)}
             />
           </div>
           <button
+            type="button"
             className="btn-primary text-black bg-white w-full mt-5"
-            onClick={handleRegister}
+            disabled={isSubmitting}
+            onClick={() => {
+              void handleRegister();
+            }}
           >
-            Register
+            {isSubmitting ? "Registering..." : "Register"}
           </button>
           <button
+            type="button"
             className="btn-primary text-black bg-white w-full mt-2"
+            disabled={isSubmitting}
             onClick={handleLogin}
           >
             Login

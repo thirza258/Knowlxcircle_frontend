@@ -1,58 +1,124 @@
-import Navbar from "./Navbar";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import GeminiService from "../services/GeminiService";
-import { PromptResponse, PromptListResponse } from "../types";
+import type { PromptResponse } from "../types";
 import ReactMarkdown from "react-markdown";
+import Navbar from "./Navbar";
+
+const NEW_CHAT_TITLE = "Ask a new question";
+const NEW_CHAT_BODY = "Supposedly Your Response";
+
+const parsePromptId = (raw: string | undefined): number | null => {
+  if (raw === undefined || !/^\d+$/.test(raw)) {
+    return null;
+  }
+  const parsed = Number(raw);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+};
 
 const Chatbot = () => {
-  const [prompts, setPrompts] = useState<PromptResponse[] | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const promptId = parsePromptId(id);
+
+  const [prompts, setPrompts] = useState<PromptResponse[]>([]);
   const [prompt, setPrompt] = useState<string>("");
-  const [response, setResponse] = useState<string>("");
-  const [promptTitle, setPromptTitle] = useState<string>("");
+  const [response, setResponse] = useState<string>(NEW_CHAT_BODY);
+  const [promptTitle, setPromptTitle] = useState<string>(NEW_CHAT_TITLE);
   const [loading, setLoading] = useState<boolean>(false);
+  const [sending, setSending] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await GeminiService.getGeminiPrompt();
-      setPrompts(response);
-    };
-    fetchData();
+    let ignore = false;
 
-    if (id) {
-      const fetchDetail = async () => {
-        const response = await GeminiService.getGeminiPromptDetail(Number(id));
-        setPromptTitle(response.prompt);
-        setResponse(response.response);
+    const fetchData = async (): Promise<void> => {
+      try {
+        const history = await GeminiService.getGeminiPrompt();
+        if (!ignore) {
+          setPrompts(history);
+        }
+      } catch (err) {
+        console.error("Error fetching the prompt history:", err);
+        if (!ignore) {
+          setPrompts([]);
+        }
       }
-      fetchDetail();
+    };
+
+    const fetchDetail = async (detailId: number): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const detail = await GeminiService.getGeminiPromptDetail(detailId);
+        if (!ignore) {
+          setPromptTitle(detail.prompt);
+          setResponse(detail.response);
+        }
+      } catch (err) {
+        console.error("Error fetching the prompt:", err);
+        if (!ignore) {
+          setPromptTitle(NEW_CHAT_TITLE);
+          setResponse("");
+          setError("This conversation could not be loaded.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void fetchData();
+
+    if (promptId !== null) {
+      void fetchDetail(promptId);
     } else {
-      setPromptTitle("Ask a new question");
-      setResponse("Supposedly Your Response");
-    };
-  }, [id]);
-
-  const handleAskNew = async () => {
-    setLoading(true);
-    try {
-      const response = await GeminiService.postGeminiPrompt(prompt);
-      console.log(response);
-      if (response) {
-        navigate(`/askbot/${response.id}`);
-      }
-    } catch (error) {
-      console.error("Error posting new prompt:", error);
-      // Handle error, maybe show a message to the user
-    } finally {
+      // /askbot with no id, or with an id that is not a number at all.
+      const unusableId = id !== undefined;
+      setPromptTitle(unusableId ? "Conversation not found" : NEW_CHAT_TITLE);
+      setResponse(unusableId ? "" : NEW_CHAT_BODY);
+      setError(unusableId ? "That conversation id is not valid." : null);
       setLoading(false);
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [promptId, id]);
+
+  // Scroll only for a real answer. `response` starts out as the placeholder
+  // body, so an unguarded effect would scroll the page on first paint of
+  // /askbot - something the page never did before.
+  useEffect(() => {
+    if (promptId === null || !response) {
+      return;
+    }
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [response, promptId]);
+
+  const handleAskNew = async (): Promise<void> => {
+    const query = prompt.trim();
+    if (!query || sending) {
+      return;
+    }
+    setSending(true);
+    setError(null);
+    try {
+      const created: PromptResponse = await GeminiService.postGeminiPrompt(query);
+      setPrompt("");
+      navigate(`/askbot/${created.id}`);
+    } catch (err) {
+      console.error("Error posting new prompt:", err);
+      setError("Your question could not be sent. Please try again.");
+    } finally {
+      setSending(false);
     }
   };
 
-  const handleAskNewPrompt = async () => {
+  const handleAskNewPrompt = () => {
     navigate(`/askbot`);
   }
 
@@ -73,11 +139,11 @@ const Chatbot = () => {
             </button>
           </div>
           <div className="text-center p-2">
-            {prompts?.map((prompt) => (
-              <div key={prompt.id}>
-                <Link to={`/askbot/${prompt.id}`}>
+            {prompts.map((historyItem) => (
+              <div key={historyItem.id}>
+                <Link to={`/askbot/${historyItem.id}`}>
                   <div className="horizontal-line"></div>
-                  <h1 className="text-base">{prompt.prompt}</h1>
+                  <h1 className="text-base">{historyItem.prompt}</h1>
                   <div className="horizontal-line"></div>
                 </Link>
               </div>
@@ -88,7 +154,7 @@ const Chatbot = () => {
         <div className="border-l-2 border-black h-full"></div>
 
         <div className="w-[80vw] flex flex-col h-[100vh]">
-          <div className="flex-grow">
+          <div className="flex-grow overflow-y-auto">
             <div className="p-3">
               <div className="horizontal-line"></div>
               
@@ -97,32 +163,36 @@ const Chatbot = () => {
             </div>
             <div className="px-3">
               <div className="horizontal-line"></div>
-              {loading ? "Loading..." : <ReactMarkdown>{response}</ReactMarkdown>}
+              {loading || sending ? "Loading..." : <ReactMarkdown>{response}</ReactMarkdown>}
               <div className="horizontal-line"></div>
             </div>
+            <div ref={bottomRef}></div>
           </div>
           <div className="p-4">
+            {error !== null && <p className="text-red-500">{error}</p>}
             <input
               type="text"
               className="text-black w-full px-4 py-2 border border-black bg-white rounded-lg"
               placeholder="Generate Prompt"
+              value={prompt}
+              disabled={sending}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   // Trigger the button click event
-                  handleAskNew();
+                  void handleAskNew();
                 }
               }}
             />
             <button
               id="askNewButton"
               className="w-full my-2 gradient-border bg-white text-black px-4 py-2 rounded-lg shadow-md"
+              disabled={sending || prompt.trim() === ""}
               onClick={() => {
-                console.log("Button clicked");
-                handleAskNew();
+                void handleAskNew();
               }}
             >
-              Generate
+              {sending ? "Generating..." : "Generate"}
             </button>
           </div>
         </div>

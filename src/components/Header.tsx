@@ -1,23 +1,20 @@
-import React, { useState } from "react";
-import HomeService from "../services/HomeService";
+import { useState } from "react";
+import type { KeyboardEvent } from "react";
 
 const Header = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<string>("");
 
-  const handleSearch = async () => {
-    if (query.trim() !== "") {
-      try {
-        const searchQueryElement = document.getElementById("search-query");
-        if (searchQueryElement) {
-          searchQueryElement.scrollIntoView({ behavior: "smooth" });
-        }
-      } catch (error) {
-        console.error("Search failed:", error);
-      }
+  const handleSearch = () => {
+    if (query.trim() === "") {
+      return;
     }
+
+    document
+      .getElementById("search-query")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleSearch();
     }
@@ -43,13 +40,18 @@ const Header = () => {
                   placeholder="Search... Boosted with Gemini"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                 />
                 <button
+                  type="button"
+                  aria-label="Search"
                   className="absolute right-0 top-0 h-full px-4 bg-transparent"
                   onClick={handleSearch}
                 >
-                  <i className="fa fa-search" style={{ color: "black" }}></i>
+                  <i
+                    className="fa-solid fa-magnifying-glass"
+                    style={{ color: "black" }}
+                  ></i>
                 </button>
               </div>
               <p className="primary-nav mt-10 text-[#4A95E7]">

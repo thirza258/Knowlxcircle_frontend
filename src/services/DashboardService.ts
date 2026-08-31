@@ -1,12 +1,11 @@
-import axios from "axios";
-import { apiBaseUrl, devBaseUrl } from "../constants";
+import api, { unwrap } from "./apiClient";
+import type { ApiEnvelope, ArticleDashboardListResponse } from "../types";
 
-const getData = async () => {
-    const response = await axios.get(`${apiBaseUrl}v1/dashboard/get/`);
-    
-    return response.data.response;
-}
+const getData = (): Promise<ArticleDashboardListResponse> =>
+    unwrap(api.get<ApiEnvelope<ArticleDashboardListResponse>>("v1/dashboard/get/"));
 
-export default {
-    getData
-}
+const DashboardService = {
+    getData,
+};
+
+export default DashboardService;

@@ -1,5 +1,3 @@
-import React, {useState} from "react";
-import { Button } from "react-bootstrap";
 import "../index.css";
 
 const Footer = () => {

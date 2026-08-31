@@ -1,40 +1,50 @@
-import axios from "axios";
-import { GeminiResponse } from "../types";
-import { apiBaseUrl, devBaseUrl } from "../constants";
+import api, { unwrap } from "./apiClient";
+import type {
+    ApiEnvelope,
+    GeminiResponse,
+    PromptDetailResponse,
+    PromptResponse,
+} from "../types";
 
-const PostGeminiArticle = async (queryString: string) => {
-    const response = await axios.post(`${apiBaseUrl}v1/article/gemini/`, {
-        query : queryString
-    });
-    return response.data.response;
-}
+const PostGeminiArticle = (queryString: string): Promise<GeminiResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<GeminiResponse>>("v1/article/gemini/", {
+            query: queryString,
+        }),
+    );
 
-const deleteGeminiArticle = async (id: number) => {
-    const response = await axios.delete(`${apiBaseUrl}v1/article/gemini/${id}`);
-    return response.data.response;
-}
+/** Answers with a confirmation string, not an object. */
+const deleteGeminiArticle = (id: number): Promise<string> =>
+    unwrap(api.delete<ApiEnvelope<string>>(`v1/article/gemini/${id}`));
 
-const getGeminiPrompt = async () => {
-    const response = await axios.get(`${apiBaseUrl}v1/gemini/chat/`);
-    return response.data.response;
-}
+const getGeminiPrompt = (): Promise<PromptResponse[]> =>
+    unwrap(api.get<ApiEnvelope<PromptResponse[]>>("v1/gemini/chat/"));
 
-const postGeminiPrompt = async (prompt: string) => {
-    const response = await axios.post(`${apiBaseUrl}v1/gemini/chat/`, {
-        chat_query: prompt
-    });
-    return response.data.response;
-}
+const postGeminiPrompt = (prompt: string): Promise<PromptResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<PromptResponse>>("v1/gemini/chat/", {
+            chat_query: prompt,
+        }),
+    );
 
-const getGeminiPromptDetail = async (id: number) => {
-    const response = await axios.get(`${apiBaseUrl}v1/gemini/chat/${id}`);
-    return response.data.response;
-}
+/**
+ * The detail endpoint answers without an `id`, so it is put back from the one
+ * that was requested. That keeps every GeminiService prompt result a complete
+ * `PromptResponse` instead of making this the odd one out.
+ */
+const getGeminiPromptDetail = async (id: number): Promise<PromptResponse> => {
+    const detail = await unwrap(
+        api.get<ApiEnvelope<PromptDetailResponse>>(`v1/gemini/chat/${id}`),
+    );
+    return { ...detail, id };
+};
 
-export default {
+const GeminiService = {
     PostGeminiArticle,
     deleteGeminiArticle,
     getGeminiPrompt,
     postGeminiPrompt,
-    getGeminiPromptDetail
-}
+    getGeminiPromptDetail,
+};
+
+export default GeminiService;

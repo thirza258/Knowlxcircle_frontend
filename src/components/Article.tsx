@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import React from "react";
 import ArticleService from "../services/ArticleService";
-import { ArticleResponse, SectionResponse, CircleResponse } from "../types";
+import type { ArticleResponse, CircleResponse } from "../types";
 import Footer from "./Footer";
 import { useParams } from "react-router-dom";
 import Markdown from "react-markdown";
@@ -9,49 +8,124 @@ import { Dropdown } from "react-bootstrap";
 import CircleService from "../services/CircleService";
 import Navbar from "./Navbar";
 
+const parseArticleId = (raw: string | undefined): number | null => {
+  if (raw === undefined || !/^\d+$/.test(raw)) {
+    return null;
+  }
+  const parsed = Number(raw);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+};
+
 const Article = () => {
-  const [article, setArticle] = useState<ArticleResponse | null>(null);
   const { id } = useParams<{ id: string }>();
-  const articleId = parseInt(id ?? "");
-  const [circle, setCircle] = useState<CircleResponse[] | null>(null);
+  const articleId = parseArticleId(id);
+
+  const [article, setArticle] = useState<ArticleResponse | null>(null);
+  const [circles, setCircles] = useState<CircleResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [circleMessage, setCircleMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchArticle = async () => {
+    setCircleMessage(null);
+
+    if (articleId === null) {
+      setArticle(null);
+      setCircles([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    let ignore = false;
+    setLoading(true);
+    setError(null);
+
+    const fetchArticle = async (): Promise<void> => {
       try {
-        const articleData = await ArticleService.getArticlesById(articleId);
-        setArticle(articleData);
-      } catch (error) {
-        console.error("Error fetching the article:", error);
+        const articleData: ArticleResponse = await ArticleService.getArticlesById(articleId);
+        if (!ignore) {
+          setArticle(articleData);
+        }
+      } catch (err) {
+        console.error("Error fetching the article:", err);
+        if (!ignore) {
+          setArticle(null);
+          setError("This article could not be loaded. Please try again.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
-    const fetchCircle = async () => {
+    const fetchCircle = async (): Promise<void> => {
       try {
         const circleData = await CircleService.GetAllCircles();
-        setCircle(circleData.circles);
-      } catch (error) {
-        console.error("Error fetching the circle:", error);
+        if (!ignore) {
+          setCircles(circleData.circles);
+        }
+      } catch (err) {
+        console.error("Error fetching the circle:", err);
+        if (!ignore) {
+          setCircles([]);
+        }
       }
-    }
+    };
 
-    fetchArticle();
-    fetchCircle();
-  }, []);
+    void fetchArticle();
+    void fetchCircle();
 
-  if (!article) {
-    return <div>Loading...</div>;
+    return () => {
+      ignore = true;
+    };
+  }, [articleId]);
+
+  if (articleId === null) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-4">Article not found.</div>
+        <Footer />
+      </>
+    );
   }
 
-  const handleCircle = (circleId: number) => async () => {
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-4">Loading...</div>
+      </>
+    );
+  }
+
+  if (error !== null || article === null) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-4">{error ?? "Article not found."}</div>
+        <Footer />
+      </>
+    );
+  }
+
+  const associateWithCircle = async (circleId: number): Promise<void> => {
+    setCircleMessage(null);
     try {
-      const response = await CircleService.associate(circleId, articleId);
-      if (response.message === "Success") {
-        alert("Article associated with the circle");
+      // `associate` deliberately resolves with the envelope, not the payload.
+      const result = await CircleService.associate(circleId, articleId);
+      if (result.message === "Success") {
+        setCircleMessage("Article associated with the circle");
+      } else {
+        setCircleMessage(result.message);
       }
-    } catch (error) {
-      console.error("Error updating the article circle:", error);
+    } catch (err) {
+      console.error("Error updating the article circle:", err);
+      setCircleMessage("The article could not be associated with the circle.");
     }
-  }
+  };
 
   return (
     <>
@@ -75,10 +149,18 @@ const Article = () => {
         </div>
         <div>
           <Dropdown>
-            {circle?.map((circle) => (
-              <Dropdown.Item key={circle.id} onClick={handleCircle(circle.id)}>{circle.name}</Dropdown.Item>
+            {circles.map((circleItem) => (
+              <Dropdown.Item
+                key={circleItem.id}
+                onClick={() => {
+                  void associateWithCircle(circleItem.id);
+                }}
+              >
+                {circleItem.name}
+              </Dropdown.Item>
             ))}
           </Dropdown>
+          {circleMessage !== null && <p>{circleMessage}</p>}
         </div>
       </div>
 

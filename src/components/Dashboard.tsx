@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import react_image from "../assets/react.svg";
 import DashboardCard from "./DashboardCard";
 import Footer from "./Footer";
@@ -6,35 +6,78 @@ import Navbar from "./Navbar";
 import Markdown from "react-markdown";
 import { useEffect, useState } from "react";
 import DashboardService from "../services/DashboardService";
-import { ArticleDashboardListResponse } from "../types";
+import type { ArticleDashboardListResponse } from "../types";
+
+/**
+ * The AI paragraphs are optional in practice: when Gemini is unreachable the
+ * backend answers with the rest of the payload and leaves `explain` /
+ * `recommendation` empty (or set to its own "unavailable" notice), so the page
+ * must render without them instead of handing an empty string to Markdown.
+ */
+const AI_UNAVAILABLE = "AI insights are not available right now.";
+
+const readText = (value: string | null | undefined): string =>
+  typeof value === "string" ? value.trim() : "";
 
 const Dashboard = () => {
   const [data, setData] = useState<ArticleDashboardListResponse | null>(null);
-  const navigate = useNavigate();
-
-  const fetchData = async () => {
-    try {
-      const fetchedData = await DashboardService.getData();
-      console.log("Fetched dashboard data:", fetchedData);
-      setData(fetchedData);
-    } catch (error) {
-      console.error("Error fetching the dashboard data:", error);
-    }
-  };
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let ignore = false;
 
+    const fetchData = async (): Promise<void> => {
+      try {
+        const fetchedData: ArticleDashboardListResponse =
+          await DashboardService.getData();
+        if (!ignore) {
+          setData(fetchedData);
+          setError(null);
+        }
+      } catch (err) {
+        console.error("Error fetching the dashboard data:", err);
+        if (!ignore) {
+          setData(null);
+          setError("The dashboard could not be loaded. Please try again.");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    };
 
-    fetchData();
+    void fetchData();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
-  if (data === null) {
-    return <p>Loading...</p>; // Show loading state when data is null
+  if (loading) {
+    return (
+      <div>
+        <Navbar />
+        <p className="p-4">Loading the dashboard...</p>
+      </div>
+    );
   }
 
-  if (data.articles.length === 0) {
-    return <p>No articles available</p>; // Handle empty articles case
+  if (error !== null || data === null) {
+    return (
+      <div>
+        <Navbar />
+        <p className="p-4">{error ?? "The dashboard could not be loaded."}</p>
+        <Footer />
+      </div>
+    );
   }
+
+  // Guard the collection as well: a partial payload must not blank the page.
+  const articles = data.articles ?? [];
+  const explain = readText(data.explain);
+  const recommendation = readText(data.recommendation);
 
   return (
     <div>
@@ -97,17 +140,27 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="my-5 r">
+            {/* A <div>, not a <p>: Markdown renders block elements, and a <p>
+                inside a <p> is invalid DOM nesting. */}
             <div id="AI">
-              <p ><Markdown>{data?.explain}</Markdown></p>
+              {explain.length > 0 ? <Markdown>{explain}</Markdown> : <p>{AI_UNAVAILABLE}</p>}
             </div>
           </div>
           <div id="article_analytics">
-      {data.articles.map((article) => (
-        <DashboardCard key={article.id} article={article} />
-      ))}
-    </div>
+            {articles.length === 0 ? (
+              <p className="m-4">No articles have been published yet.</p>
+            ) : (
+              articles.map((article) => (
+                <DashboardCard key={article.id} article={article} />
+              ))
+            )}
+          </div>
           <div className="m-4">
-            <Markdown>{data?.recommendation}</Markdown>
+            {recommendation.length > 0 ? (
+              <Markdown>{recommendation}</Markdown>
+            ) : (
+              <p>{AI_UNAVAILABLE}</p>
+            )}
           </div>
         </div>
       </div>

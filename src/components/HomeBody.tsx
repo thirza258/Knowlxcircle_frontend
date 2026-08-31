@@ -1,31 +1,27 @@
-import CardFunc from "./CardFunc";
-import { SearchResponse, ArticleSearchResponse } from "../types";
-import { useContext, useState, useEffect } from "react";
-import { AuthContext } from "../AuthContext";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { ReactTyped } from "react-typed";
+import CardFunc from "./CardFunc";
+import { useAuth } from "../useAuth";
+import type { SearchResponse } from "../types";
 
 type HomeBodyProps = {
-  response: SearchResponse;
+  response: SearchResponse | null;
+  isLoading: boolean;
+  error: string | null;
 };
 
-const HomeBody = (props: HomeBodyProps) => {
-  const [typedText, setTypedText] = useState<string>("");
+const HomeBody = ({ response, isLoading, error }: HomeBodyProps) => {
+  const { isAuthenticated } = useAuth();
   const [isTypingComplete, setIsTypingComplete] = useState<boolean>(false);
-  const authContext = useContext(AuthContext);
-  const [searchResults, setSearchResults] = useState<ArticleSearchResponse[]>([]);
 
-  if (!authContext) {
-    return null;
-  }
+  const prompt = response?.prompt ?? "";
+  const answer = response?.response ?? "";
 
   useEffect(() => {
-    setTypedText(props.response.response);
-    setIsTypingComplete(false); 
-  }, [props.response.response]);
-
-  const { isAuthenticated } = authContext;
+    setIsTypingComplete(false);
+  }, [answer]);
 
   return (
     <div>
@@ -49,27 +45,27 @@ const HomeBody = (props: HomeBodyProps) => {
         </div>
       )}
       <section className="mt-10">
-        <h2 className="primary-nav">{props.response.prompt}</h2>
+        <h2 className="primary-nav">{prompt}</h2>
         <div className="mt-10">
+          {isLoading && <p className="primary-nav">Loading the latest answer...</p>}
+          {!isLoading && error !== null && <p className="text-red-500">{error}</p>}
           <div>
-            {!isTypingComplete && (
+            {answer !== "" && !isTypingComplete && (
               <ReactTyped
-                strings={[props.response.response]}
+                strings={[answer]}
                 typeSpeed={100}
                 loop
                 backSpeed={50}
                 startDelay={500}
                 showCursor
                 cursorChar="|"
-                onComplete={(self) => {
-                  setIsTypingComplete(true);
-                }}
+                onComplete={() => setIsTypingComplete(true)}
               />
             )}
           </div>
-          {isTypingComplete && (
+          {answer !== "" && isTypingComplete && (
             <div>
-              <ReactMarkdown>{typedText}</ReactMarkdown>
+              <ReactMarkdown>{answer}</ReactMarkdown>
             </div>
           )}
           <div className="mt-10" id="search-query">
@@ -89,4 +85,5 @@ const HomeBody = (props: HomeBodyProps) => {
     </div>
   );
 };
+
 export default HomeBody;

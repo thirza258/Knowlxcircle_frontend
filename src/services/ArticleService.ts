@@ -1,49 +1,65 @@
-import axios from "axios";
-import { apiBaseUrl, devBaseUrl } from "../constants";
-import { ArticleListResponse } from "../types";
+import api, { unwrap } from "./apiClient";
+import type {
+    ApiEnvelope,
+    ArticleListResponse,
+    ArticleResponse,
+    CreateArticleResponse,
+    SectionMutationResponse,
+    SectionUpdateResponse,
+} from "../types";
 
+/** `GET v1/article/articles/` answers with a bare array; wrap it for the caller. */
 const getArticles = async (): Promise<ArticleListResponse> => {
-    const response = await axios.get(`${apiBaseUrl}v1/article/articles/`);
-    return { articles_list: response.data.response };
-}
+    const articles = await unwrap(
+        api.get<ApiEnvelope<ArticleResponse[]>>("v1/article/articles/"),
+    );
+    return { articles_list: articles };
+};
 
-const getArticlesById = async (id: number) => {
-    const response = await axios.get(`${apiBaseUrl}v1/article/articles/${id}/`);
-    return response.data.response;
-}
+const getArticlesById = (id: number): Promise<ArticleResponse> =>
+    unwrap(api.get<ApiEnvelope<ArticleResponse>>(`v1/article/articles/${id}/`));
 
-const postArticleTitle = async (title: string) => {
-    const response = await axios.post(`${apiBaseUrl}v1/article/title/`, {
-        title: title,
-        author: "Gemini API",
-        published: true
-    });
-    return response.data.response;
-}
+const postArticleTitle = (title: string): Promise<CreateArticleResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<CreateArticleResponse>>("v1/article/title/", {
+            title: title,
+            author: "Gemini API",
+            published: true,
+        }),
+    );
 
-const postSection = async (articleId: number, body: string, order: number) => {
-    const response = await axios.post(`${apiBaseUrl}v1/article/section/`, {
-        body: body,
-        order: order,
-        article_id: articleId
-    });
-    return response.data.response;
-}
+const postSection = (
+    articleId: number,
+    body: string,
+    order: number,
+): Promise<SectionMutationResponse> =>
+    unwrap(
+        api.post<ApiEnvelope<SectionMutationResponse>>("v1/article/section/", {
+            body: body,
+            order: order,
+            article_id: articleId,
+        }),
+    );
 
-const EditSection = async (sectionId: number, body: string, order: number) => {
-    const response = await axios.put(`${apiBaseUrl}v1/article/section/`, {
-        id : sectionId,
-        body: body,
-        order: order,
-    });
-    return response.data.response;
-}
+const EditSection = (
+    sectionId: number,
+    body: string,
+    order: number,
+): Promise<SectionUpdateResponse> =>
+    unwrap(
+        api.put<ApiEnvelope<SectionUpdateResponse>>("v1/article/section/", {
+            id: sectionId,
+            body: body,
+            order: order,
+        }),
+    );
 
-
-export default {
+const ArticleService = {
     getArticles,
     getArticlesById,
-    postArticleTitle, 
+    postArticleTitle,
     postSection,
-    EditSection
-}
+    EditSection,
+};
+
+export default ArticleService;
