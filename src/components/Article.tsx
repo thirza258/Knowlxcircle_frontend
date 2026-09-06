@@ -117,7 +117,11 @@ const Article = () => {
       // `associate` deliberately resolves with the envelope, not the payload.
       const result = await CircleService.associate(circleId, articleId);
       if (result.message === "Success") {
-        setCircleMessage("Article associated with the circle");
+        setCircleMessage(
+          result.response?.created === false
+            ? "This article is already in that circle"
+            : "Article associated with the circle",
+        );
       } else {
         setCircleMessage(result.message);
       }

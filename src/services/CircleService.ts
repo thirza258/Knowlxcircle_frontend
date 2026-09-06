@@ -1,7 +1,7 @@
 import api, { unwrap } from "./apiClient";
 import type {
     ApiEnvelope,
-    ApiMessage,
+    CircleAssociation,
     CircleListResponse,
     CreateCircleResponse,
     SingleCircleResponse,
@@ -25,18 +25,19 @@ const getCircle = (id: string): Promise<SingleCircleResponse> =>
     unwrap(api.get<ApiEnvelope<SingleCircleResponse>>(`v1/circle/circles/${id}/`));
 
 /**
- * The associate endpoint answers `{ status, message }` with no `response` key,
- * so this one deliberately returns the envelope instead of unwrapping it -
- * callers check `result.message === "Success"`.
+ * Returns the whole envelope rather than unwrapping it: callers check
+ * `message === "Success"`, and `response.created` distinguishes a new link from
+ * an article that was already in the circle (the endpoint is idempotent now
+ * that a UniqueConstraint backs it).
  */
 const associate = async (
     circleId: number,
     articleId: number,
-): Promise<ApiMessage> => {
-    const { data } = await api.post<ApiMessage>("v1/circle/associate/", {
-        circle_id: circleId,
-        article_id: articleId,
-    });
+): Promise<ApiEnvelope<CircleAssociation>> => {
+    const { data } = await api.post<ApiEnvelope<CircleAssociation>>(
+        "v1/circle/associate/",
+        { circle_id: circleId, article_id: articleId },
+    );
     return data;
 };
 

@@ -37,7 +37,7 @@ const Header = () => {
                 <input
                   type="text"
                   className="search-header text-black w-full px-4 py-2"
-                  placeholder="Search... Boosted with Gemini"
+                  placeholder="Search... AI-assisted"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={handleKeyDown}

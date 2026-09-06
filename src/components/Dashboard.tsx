@@ -9,7 +9,7 @@ import DashboardService from "../services/DashboardService";
 import type { ArticleDashboardListResponse } from "../types";
 
 /**
- * The AI paragraphs are optional in practice: when Gemini is unreachable the
+ * The AI paragraphs are optional in practice: when the model backend is unreachable the
  * backend answers with the rest of the payload and leaves `explain` /
  * `recommendation` empty (or set to its own "unavailable" notice), so the page
  * must render without them instead of handing an empty string to Markdown.
@@ -122,10 +122,6 @@ const Dashboard = () => {
             />
           </div>
           <div className="flex my-5 justify-center" id="card_analytics">
-            <div className="bg-gray-300 rounded-lg shadow-lg p-4 m-3 flex-1">
-              <p>Views: </p>
-              <p>1234</p>
-            </div>
             <div className="bg-gray-300 rounded-lg shadow-lg p-4 m-3 flex-1">
               <p>Overall Sentiment: </p>
               <p>{data.sentiment}</p>

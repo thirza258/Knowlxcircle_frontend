@@ -157,7 +157,7 @@ const ArticleBuilder = () => {
             onClick={openModal}
             disabled={loadingDraft || submitting}
           >
-            Generate With Gemini
+            Generate With AI
           </button>
           {loadingDraft && <p>Loading the generated article...</p>}
         </div>

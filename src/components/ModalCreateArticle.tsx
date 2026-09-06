@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from "react";
-import GeminiService from "../services/GeminiService";
-import type { GeminiResponse } from "../types";
+import OpenRouterService from "../services/OpenRouterService";
+import type { GeneratedArticle } from "../types";
 
 type ModalCreateArticleProps = {
   closeModal: () => void;
@@ -11,7 +11,7 @@ type ModalCreateArticleProps = {
 const ModalCreateArticle = ({ closeModal, confirmText, initialText }: ModalCreateArticleProps) => {
     const [localText, setLocalText] = useState<string>(initialText);
     const [idArticle, setIdArticle] = useState<number>(0);
-    const [article, setArticle] = useState<GeminiResponse | null>(null);
+    const [article, setArticle] = useState<GeneratedArticle | null>(null);
     const [step, setStep] = useState<number>(1);
     const [pending, setPending] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ const ModalCreateArticle = ({ closeModal, confirmText, initialText }: ModalCreat
         setPending(true);
         setError(null);
         try {
-          const response: GeminiResponse = await GeminiService.PostGeminiArticle(localText);
+          const response: GeneratedArticle = await OpenRouterService.postArticle(localText);
           setArticle(response);
           setIdArticle(response.id);
           setStep(2);
@@ -55,7 +55,7 @@ const ModalCreateArticle = ({ closeModal, confirmText, initialText }: ModalCreat
         }
         setPending(true);
         try {
-          await GeminiService.deleteGeminiArticle(idArticle);
+          await OpenRouterService.deleteArticle(idArticle);
         } catch (err) {
           console.error("Error discarding the generated article:", err);
         } finally {

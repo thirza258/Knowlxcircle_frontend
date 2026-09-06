@@ -14,6 +14,15 @@ export type ApiEnvelope<T> = {
 };
 
 /** Endpoints that acknowledge a write without a payload (e.g. circle association). */
+/** Payload of `POST v1/circle/associate/`. */
+export type CircleAssociation = {
+    id: number;
+    circle_id: number;
+    article_id: number;
+    /** false when the article was already in this circle. */
+    created: boolean;
+};
+
 export type ApiMessage = {
     status: number;
     message: string;
@@ -45,7 +54,7 @@ export type ArticleResponse = {
 }
 
 /** Payload of `POST v1/article/gemini/`: an article with sections but no comments. */
-export type GeminiResponse = {
+export type GeneratedArticle = {
     id: number;
     title: string;
     author: string;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import GeminiService from "../services/GeminiService";
+import OpenRouterService from "../services/OpenRouterService";
 import type { PromptResponse } from "../types";
 import ReactMarkdown from "react-markdown";
 import Navbar from "./Navbar";
@@ -36,7 +36,7 @@ const Chatbot = () => {
 
     const fetchData = async (): Promise<void> => {
       try {
-        const history = await GeminiService.getGeminiPrompt();
+        const history = await OpenRouterService.getPrompts();
         if (!ignore) {
           setPrompts(history);
         }
@@ -52,7 +52,7 @@ const Chatbot = () => {
       setLoading(true);
       setError(null);
       try {
-        const detail = await GeminiService.getGeminiPromptDetail(detailId);
+        const detail = await OpenRouterService.getPromptDetail(detailId);
         if (!ignore) {
           setPromptTitle(detail.prompt);
           setResponse(detail.response);
@@ -107,7 +107,7 @@ const Chatbot = () => {
     setSending(true);
     setError(null);
     try {
-      const created: PromptResponse = await GeminiService.postGeminiPrompt(query);
+      const created: PromptResponse = await OpenRouterService.postPrompt(query);
       setPrompt("");
       navigate(`/askbot/${created.id}`);
     } catch (err) {

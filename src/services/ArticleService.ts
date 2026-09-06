@@ -23,7 +23,7 @@ const postArticleTitle = (title: string): Promise<CreateArticleResponse> =>
     unwrap(
         api.post<ApiEnvelope<CreateArticleResponse>>("v1/article/title/", {
             title: title,
-            author: "Gemini API",
+            author: "AI Assistant",
             published: true,
         }),
     );
